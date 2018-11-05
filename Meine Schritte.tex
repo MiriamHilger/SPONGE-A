@@ -1,0 +1,52 @@
+\begin{document}
+\section{Recherche}
+Literatur Paper
+
+\section{1. Datensatz breastcancer}
+1. Schritt von Sponge - Regression
+-> SPONGE::functionname
+-> davon Parameter coeffizient auf >0 gesetzt
+-> zuvor standardisierung:
+
+library(matrixStats)
+
+#Die Daten sind schon log 2 normalisiert, das merkst du daran dass es negative values gibt. Man kann aber nicht negativ reads zaehlen.
+
+#Wir brauchen erst mal einen Varianzfiler, manche Gene sind nicht detektiert und haben den Minimalvalue -9,... Diese Gene koennen nicht skaliert werden weil man sonst durch 0 teilen wuerde
+cancer_gene_expr <- cancer_gene_expr[,-which(colVars(cancer_gene_expr) < 1e-5)]
+
+#Jetzt normalisieren wir die Genexpressionsvektoren noch auf die Normalverteilung so dass alle mean 0 und Standardabweichung 1 haben. Das erreicht man durch subtrahieren vom mean und teilen durch die SD. in R:
+
+cancer_gene_expr_scaled <- scale(cancer_gene_expr)
+
+#check ob es funktioniert hat
+hist(colMeans(cancer_gene_expr)) 
+hist(colMeans(cancer_gene_expr_scaled)) #standardisiert
+
+hist(colSds(cancer_gene_expr)) 
+hist(colSds(cancer_gene_expr_scaled)) #standardisiert
+
+#auf den normalisierten / standardisierten Daten kannst du jetzt die Regressionskoeffizienten vergleichen
+
+#das gleiche musst du natuerlich auch noch fuer die miRNA Daten machen!
+
+29.11.18
+-> doParallel auf 2 Kerne laufen lassen
+
+05.11.18 
+-> regex um nur von ENSG bis punkt alles zu speichern bei cancer_gene_expr_scaled:
+    colnames(cancer_gene_expr_scaled) <- substr(colnames(cancer_gene_expr_scaled), 1, 15)
+    
+->   genes_miRNA_candidates <- sponge_gene_miRNA_interaction_filter(
+     gene_expr = cancer_gene_expr_scaled,
+     mir_expr = cancer_mir_expr_scaled,
+     mir_predicted_targets = NULL,
+     coefficient.threshold = 0,
+     coefficient.direction = ">",
+     F.test = TRUE)
+Ergebnis hier: 
+
+
+
+
+\end{document}
